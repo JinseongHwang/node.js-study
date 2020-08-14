@@ -8,13 +8,12 @@ import { mwmw } from "./local_middleware";
 
 const app = express();
 
-
 app.use(helmet());
 app.use(morgan("dev"));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-// app.get("/", mwmw);
+
 app.use(mwmw);
 app.use("/", home_routers); // 라우팅
 
