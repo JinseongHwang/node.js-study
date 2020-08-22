@@ -4,8 +4,9 @@ import mongoose from "mongoose";
 dotenv.config();
 
 import "./models/User";
+import "./models/Post";
+
 mongoose.connect(process.env.MONGO_URL, {
-    // 스키마
   useNewUrlParser: true,
   useFindAndModify: false,
 });
@@ -13,8 +14,7 @@ mongoose.connect(process.env.MONGO_URL, {
 const db = mongoose.connection;
 
 const handleOpen = () => console.log("✅ Connect to DB");
-const handleError = (error) =>
-  console.log(`❌ Error on DB connection ${error}`);
+const handleError = (error) => console.log(`❌ Error on DB connection ${error}`);
 
 db.once("open", handleOpen);
 db.on("error", handleError);
