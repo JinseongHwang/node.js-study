@@ -1,5 +1,3 @@
-// 여기엔 모든 함수를 작성해둔다.
-
 import User from "../models/User"
 
 export const handle_home = (req, res) => {
@@ -28,7 +26,7 @@ export const handle_post_join = async (req, res) => {
         return;
     }
     
-    for (let i = 1; i < all_user.length; i++) {
+    for (let i = 0; i < all_user.length; i++) {
         if(user_id === all_user[i]["id"]) {
             res.send("Your ID is a duplicate value.");
             return;
@@ -51,7 +49,70 @@ export const handle_post_join = async (req, res) => {
         id: user_id,
         pw: user_pw,
         ph: user_ph,
+        loginSession: false,
     });
     
     res.send("Sign up successfully.");
+}
+
+export const handle_login = async (req, res) => {
+    const user_id = req.body.getID;
+    const user_pw = req.body.getPW;
+    const all_user = await User.find();
+
+    for (let i = 0; i < all_user.length; i++) {
+        if (all_user[i]["id"] == user_id && all_user[i]["pw"] == user_pw) {
+            const session_changed = await User.findByIdAndUpdate(
+                {
+                    _id: all_user[i]["_id"],
+                },
+                {
+                    loginSession: true,
+                }
+            );
+            res.send("You have successfully logged in.");
+            return;
+        }
+    }
+    res.send("You failed to log in.");
+}
+
+export const handle_logout = async (req, res) => {
+    const user_id = req.body.getID;
+    const all_user = await User.find();
+
+    for (let i = 0; i < all_user.length; i++) {
+        if (all_user[i]["id"] == user_id) {
+            const session_changed = await User.findByIdAndUpdate(
+                {
+                    _id: all_user[i]["_id"],
+                },
+                {
+                    loginSession: false,
+                }
+            );
+            res.send("You have successfully logged out.");
+            return;
+        }
+    }
+    res.send("You failed to log out.");
+}
+
+export const handle_withdraw_user = async (req, res) => {
+    const user_id = req.body.getID;
+    const user_pw = req.body.getPW;
+    const all_user = await User.find();
+
+    for (let i = 0; i < all_user.length; i++) {
+        if (all_user[i]["id"] == user_id && all_user[i]["pw"] == user_pw) {
+            const withdrawal = await User.deleteOne(
+                {
+                    _id: all_user[i]["_id"]
+                }
+            );
+            res.send("You have successfully withdrawn.");
+            return;
+        }
+    }
+    res.send("You failed to withdrawn.");
 }
